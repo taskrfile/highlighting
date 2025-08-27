@@ -3,44 +3,61 @@
 name: taskrfile
 file_extensions:
   - taskrfile
-scope: source.taskfile
+scope: source.taskrfile
 
 contexts:
   main:
     - match: ','
       scope: punctuation.delimiter
 
+    - match: '='
+      scope: variable.other.taskrfile
+
     - match: ':'
       scope: keyword.operator.ternary
 
-    - match: '//.*$'
-      scope: comment.line.double-slash.taskfile
+    - match: '^task\b'
+      scope: keyword.declaration.task.taskrfile
 
-    - match: '\btask\b'
-      scope: keyword.declaration.task.taskfile
+    - match: '^(?:default\s+)?env\b'
+      scope: keyword.declaration.env.taskrfile
 
-    - match: '\benv\b'
-      scope: keyword.declaration.env.taskfile
-
-    - match: '\bdefautl\b'
-      scope: keyword.default.taskfile
+    - match: '^default\b'
+      scope: keyword.default.taskrfile
 
     - match: '\b(run|needs|alias)\b(?=\s*=)'
-      scope: property.taskfile
+      scope: property.taskrfile
+
+    - match: '\bfile\b(?=\s*=)'
+      scope: property.taskrfile
+      push: file-value
 
     - match: '\bdesc\b(?=\s*=)'
-      scope: property.taskfile
+      scope: property.taskrfile
       push: desc-value
 
     - match: '\b[A-Za-z_][A-Za-z0-9_]*\b'
-      scope: variable.other.taskfile
+      scope: variable.other.taskrfile
+
+    - match: '//.*$'
+      scope: comment.line.double-slash.taskrfile
+
+  file-value:
+    - match: '='
+      scope: variable.other.taskrfile
+      set: file-string
+
+  file-string:
+    - match: '(?<=\=).*'
+      scope: filename.taskrfile
+      pop: true
 
   desc-value:
     - match: '='
-      scope: variable.other.taskfile
+      scope: variable.other.taskrfile
       set: desc-string
 
   desc-string:
-    - meta_scope: string.taskfile
-    - match: '$'
+    - match: '(?<=\=).*?(?=//|$)'
+      scope: string.taskrfile
       pop: true
