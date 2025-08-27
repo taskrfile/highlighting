@@ -1,0 +1,46 @@
+%YAML 1.2
+---
+name: taskrfile
+file_extensions:
+  - taskrfile
+scope: source.taskfile
+
+contexts:
+  main:
+    - match: ','
+      scope: punctuation.delimiter
+
+    - match: ':'
+      scope: keyword.operator.ternary
+
+    - match: '//.*$'
+      scope: comment.line.double-slash.taskfile
+
+    - match: '\btask\b'
+      scope: keyword.declaration.task.taskfile
+
+    - match: '\benv\b'
+      scope: keyword.declaration.env.taskfile
+
+    - match: '\bdefautl\b'
+      scope: keyword.default.taskfile
+
+    - match: '\b(run|needs|alias)\b(?=\s*=)'
+      scope: property.taskfile
+
+    - match: '\bdesc\b(?=\s*=)'
+      scope: property.taskfile
+      push: desc-value
+
+    - match: '\b[A-Za-z_][A-Za-z0-9_]*\b'
+      scope: variable.other.taskfile
+
+  desc-value:
+    - match: '='
+      scope: variable.other.taskfile
+      set: desc-string
+
+  desc-string:
+    - meta_scope: string.taskfile
+    - match: '$'
+      pop: true
